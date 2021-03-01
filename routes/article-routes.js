@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get("/", articleController.getArticles);
 router.get("/:aid", articleController.getArticleById);
-router.get("/user/:uid", articleController.getArticleByUserId)
+router.get("/user/:uid", articleController.getArticleByUserId);
+
+router.post("/", articleController.createArticle);
 
 module.exports = router;

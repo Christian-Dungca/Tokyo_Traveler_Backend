@@ -5,6 +5,8 @@ const articleRoutes = require("./routes/article-routes");
 
 const app = express();
 
+app.use(bodyParser.json());
+
 app.use("/api/articles", articleRoutes);
 
 app.use((error, req, res, next) => {

@@ -83,6 +83,27 @@ const getArticleById = (req, res, next) => {
   res.json({ data: article });
 };
 
+const createArticle = (req, res, next) => {
+  let newArticle;
+  const { id, title, image, content, createdAt, author } = req.body;
+  try {
+    newArticle = {
+      id,
+      title,
+      image,
+      content,
+      createdAt,
+      author,
+    };
+    DUMMY_ARTICLES.push(newArticle);
+  } catch (err) {
+    const Error = new HttpError(err, 500);
+    return next(Error);
+  }
+  res.json({ data: newArticle });
+};
+
 exports.getArticles = getArticles;
 exports.getArticleByUserId = getArticleByUserId;
 exports.getArticleById = getArticleById;
+exports.createArticle = createArticle;

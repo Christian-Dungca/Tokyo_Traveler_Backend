@@ -1,3 +1,5 @@
+const HttpError = require("../models/http-error");
+
 const DUMMY_ARTICLES = [
   {
     id: "halkj13j0adf10",
@@ -55,15 +57,26 @@ const getArticles = (req, res, next) => {
 
 const getArticleByUserId = (req, res, next) => {
   const userId = req.params.uid;
-  const articles = DUMMY_ARTICLES.filter((article) => {
-    return article.author.id === userId;
-  });
-  res.json({ data: articles });
+  let userArticles;
+
+  try {
+    userArticles = DUMMY_ARTICLES.filter((article) => {
+      return article.author.id === userId;
+    });
+
+    if (userArticles.length === 0) {
+      throw "Could not find articles for that user";
+    }
+  } catch (err) {
+    const Error = new HttpError(err, 401);
+    return next(Error);
+  }
+  res.json({ data: userArticles });
 };
 
 const getArticleById = (req, res, next) => {
   const articleId = req.params.aid;
-  console.log(articleId);
+
   const article = DUMMY_ARTICLES.find((article) => {
     return article.id === articleId;
   });

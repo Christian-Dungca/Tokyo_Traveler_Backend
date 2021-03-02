@@ -123,7 +123,20 @@ const updateArticle = (req, res, next) => {
 
   DUMMY_ARTICLES[articlePosition] = updatedArticle;
 
-  res.json({ message: updatedArticle });
+  res.json({ data: updatedArticle });
+};
+
+const deleteArticle = (req, res, next) => {
+  const articleId = req.params.aid;
+  const deletedArticle = DUMMY_ARTICLES.find(article => {
+      return article.id === articleId 
+  })
+
+  const updatedData = DUMMY_ARTICLES.filter((article) => {
+    return article.id !== articleId;
+  });
+
+  res.json({ data: deletedArticle, updatedData });
 };
 
 exports.getArticles = getArticles;
@@ -131,3 +144,4 @@ exports.getArticleByUserId = getArticleByUserId;
 exports.getArticleById = getArticleById;
 exports.createArticle = createArticle;
 exports.updateArticle = updateArticle;
+exports.deleteArticle = deleteArticle;

@@ -103,7 +103,31 @@ const createArticle = (req, res, next) => {
   res.json({ data: newArticle });
 };
 
+const updateArticle = (req, res, next) => {
+  const articleId = req.params.aid;
+  const { title, image, content } = req.body;
+
+  const updatedArticle = {
+    ...DUMMY_ARTICLES.find((article) => {
+      return article.id === articleId;
+    }),
+  };
+  const articlePosition = DUMMY_ARTICLES.indexOf((article) => {
+    return article.id === articleId;
+  });
+
+  updatedArticle.title = title;
+  updatedArticle.image = image;
+  updatedArticle.content = content;
+  updatedArticle.createdAt = Date.now();
+
+  DUMMY_ARTICLES[articlePosition] = updatedArticle;
+
+  res.json({ message: updatedArticle });
+};
+
 exports.getArticles = getArticles;
 exports.getArticleByUserId = getArticleByUserId;
 exports.getArticleById = getArticleById;
 exports.createArticle = createArticle;
+exports.updateArticle = updateArticle;

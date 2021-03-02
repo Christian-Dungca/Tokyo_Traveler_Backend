@@ -9,5 +9,6 @@ router.get("/:aid", articleController.getArticleById);
 router.get("/user/:uid", articleController.getArticleByUserId);
 
 router.post("/", articleController.createArticle);
+router.patch('/:aid', articleController.updateArticle);
 
 module.exports = router;

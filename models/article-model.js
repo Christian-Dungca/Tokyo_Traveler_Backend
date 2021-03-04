@@ -15,7 +15,7 @@ const articleSchema = new mongoose.Schema({
     default: Date.now(),
   },
   content: {
-    type: Array,
+    type: [String],
     required: [true, "An article must have content"],
   },
 });

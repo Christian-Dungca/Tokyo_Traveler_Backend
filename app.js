@@ -3,10 +3,9 @@ const bodyParser = require("body-parser");
 
 const HttpError = require("./models/http-error");
 const articleRoutes = require("./routes/article-routes");
-const userRoutes = require('./routes/user-routes');
+const userRoutes = require("./routes/user-routes");
 
 const app = express();
-// adflaksdjfajkfdklasjflaskfd
 app.use(bodyParser.json());
 
 app.use("/api/articles", articleRoutes);
@@ -25,4 +24,4 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred" });
 });
 
-app.listen(5000);
+module.exports = app;

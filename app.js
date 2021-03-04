@@ -6,7 +6,7 @@ const articleRoutes = require("./routes/article-routes");
 const userRoutes = require('./routes/user-routes');
 
 const app = express();
-
+// adflaksdjfajkfdklasjflaskfd
 app.use(bodyParser.json());
 
 app.use("/api/articles", articleRoutes);

@@ -6,11 +6,11 @@ const DUMMY_USERS = [
   { name: "moon", email: "moon@gmail.com", password: "12345" },
 ];
 
-const SignUpUser = (req, res, next) => {
+const signUpUser = (req, res, next) => {
   const { name, email, password } = req.body;
   const newUser = { name, email, password };
 
   res.json({ data: newUser });
 };
 
-exports.SignUpUser = SignUpUser;
+exports.signUpUser = signUpUser;

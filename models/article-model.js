@@ -18,6 +18,14 @@ const articleSchema = new mongoose.Schema({
     type: [String],
     required: [true, "An article must have content"],
   },
+  comments: {
+    type: [String],
+    required: false,
+  },
+  likes: {
+    type: [Number],
+    required: false,
+  },
 });
 
 const Article = mongoose.model("Article", articleSchema);

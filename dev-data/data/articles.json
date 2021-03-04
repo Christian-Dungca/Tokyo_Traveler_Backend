@@ -1,0 +1,26 @@
+[
+  {
+    "title": "light over the truck",
+    "createdAt": 1614889399436,
+    "image": "/uploads/images",
+    "content": ["this is funny", "hahaha", "okay"],
+    "comments": ["this is a test comment"],
+    "likes": 123
+  },
+  {
+    "title": "squids on the microphone",
+    "createdAt": 1614889399436,
+    "image": "/uploads/images",
+    "content": ["this is funny", "hahaha", "okay"],
+    "comments": ["this is a test comment"],
+    "likes": 123
+  },
+  {
+    "title": "baby and buttercups",
+    "createdAt": 1614889399436,
+    "image": "/uploads/images",
+    "content": ["this is funny", "hahaha", "okay"],
+    "comments": ["this is a test comment"],
+    "likes": 123
+  }
+]

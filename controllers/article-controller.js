@@ -6,6 +6,7 @@ const getArticles = async (req, res, next) => {
     const allArticles = await Article.find();
     res.status(200).json({
       status: "success",
+      results: allArticles.length,
       data: { allArticles },
     });
   } catch (err) {

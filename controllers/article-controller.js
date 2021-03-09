@@ -2,6 +2,7 @@ const Article = require("../models/article-model");
 const HttpError = require("../models/http-error");
 
 const getArticles = async (req, res, next) => {
+  console.log(req.query);
   const { page, sort, limit, fields, ...queryObj } = req.query;
   try {
     // filtering
@@ -11,10 +12,19 @@ const getArticles = async (req, res, next) => {
       (match) => `$${match}`
     );
 
-    console.log(queryString);
-    const query = Article.find(JSON.parse(queryString));
+    let query = Article.find(JSON.parse(queryString));
+
+    // sorting
+    if (sort) {
+      console.log(`sort: ${sort}`)
+      const sortBy = sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    } else {
+      query.sort("-createdAt");
+    }
 
     console.log(`queryString: ${queryString}`);
+    // execute query
     const allArticles = await query;
 
     res.status(200).json({

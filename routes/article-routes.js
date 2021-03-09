@@ -4,12 +4,17 @@ const articleController = require("../controllers/article-controller");
 
 const router = express.Router();
 
-router.get("/", articleController.getArticles);
-router.get("/:aid", articleController.getArticleById);
-router.get("/user/:uid", articleController.getArticleByUserId);
+router
+  .route("/")
+  .get(articleController.getArticles)
+  .post(articleController.createArticle);
 
-router.post("/", articleController.createArticle);
-router.patch("/:aid", articleController.updateArticle);
-router.delete("/:aid", articleController.deleteArticle);
+router
+  .route("/:aid")
+  .get(articleController.getArticleById)
+  .patch(articleController.updateArticle)
+  .delete(articleController.deleteArticle);
+
+router.get("/user/:uid", articleController.getArticleByUserId);
 
 module.exports = router;

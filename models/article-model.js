@@ -23,7 +23,7 @@ const articleSchema = new mongoose.Schema({
     required: false,
   },
   likes: {
-    type: [Number],
+    type: Number,
     required: false,
   },
 });

@@ -2,8 +2,21 @@ const Article = require("../models/article-model");
 const HttpError = require("../models/http-error");
 
 const getArticles = async (req, res, next) => {
+  const { page, sort, limit, fields, ...queryObj } = req.query;
   try {
-    const allArticles = await Article.find();
+    // filtering
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      (match) => `$${match}`
+    );
+
+    console.log(queryString);
+    const query = Article.find(JSON.parse(queryString));
+
+    console.log(`queryString: ${queryString}`);
+    const allArticles = await query;
+
     res.status(200).json({
       status: "success",
       results: allArticles.length,

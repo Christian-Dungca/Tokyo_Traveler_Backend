@@ -32,7 +32,17 @@ const getArticles = async (req, res, next) => {
       query = query.select("-__v");
     }
 
-    console.log(`queryString: ${queryString}`);
+    const pageN = page * 1 || 1;
+    const limitN = limit * 1 || 2;
+    const skip = (pageN - 1) * limitN;
+
+    query = query.skip(skip).limit(limitN);
+
+    if (page) {
+      const numArticles = await Article.countDocuments();
+      if (skip >= numArticles) throw Error("this page doesn't exit");
+    }
+
     // execute query
     const allArticles = await query;
 

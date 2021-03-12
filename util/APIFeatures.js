@@ -1,40 +1,50 @@
+class APIFeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
 
-exports.filterFeature = (queryString) => {
-    const queryObj = { ...queryString };
-  
+  filter() {
+    const { sort, limit, fields, ...queryObj } = this.queryString;
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    
-    return JSON.parse(queryStr);
-  };
-  
-exports.sortFeature = (query, sortObj) => {
-    if (sortObj) {
-      const sortBy = sortObj.split(",").join(" ");
-      query = query.sort(sortBy);
-      return query;
+    console.log(queryStr);
+    this.query.find(JSON.parse(queryStr));
+    return this;
+  }
+
+  sort() {
+    const { sort } = this.queryString;
+    if (sort) {
+      const sortBy = sort.split(",").join(" ");
+      this.query = this.query.sort(sortBy);
     } else {
-      query.sort("-createdAt");
-      return query;
+      this.query.sort("-createdAt");
     }
-  };
-  
-exports.limitFieldsFeature = (query, fieldsObj) => {
-    if (fieldsObj) {
-      const fieldStr = fieldsObj.split(",").join(" ");
-      query = query.select(fieldStr);
-      return query;
+    return this;
+  }
+
+  limitFields() {
+    const { fields } = this.queryString;
+    console.log(fields);
+    if (fields) {
+      const fieldStr = fields.split(",").join(" ");
+      this.query = this.query.select(fieldStr);
     } else {
-      query = query.select("-__v");
-      return query;
+      this.query = this.query.select("-__v");
     }
-  };
-  
-exports.paginateFeature = (query, limit, page) => {
+    return this;
+  }
+
+  paginate() {
+    const { page, limit } = this.queryString;
+
     const pageN = page * 1 || 1;
     const limitN = limit * 1 || 20;
     const skip = (pageN - 1) * limitN;
-  
-    query = query.skip(skip).limit(limitN);
-  };
-  
+
+    this.query = this.query.skip(skip).limit(limitN);
+  }
+}
+
+module.exports = APIFeatures;

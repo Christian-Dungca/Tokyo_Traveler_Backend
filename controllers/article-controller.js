@@ -1,19 +1,18 @@
 const Article = require("../models/article-model");
 const HttpError = require("../models/http-error");
-const APIFeatures = require('../util/APIFeatures');
+const APIFeatures = require("../util/APIFeatures");
 
 const getArticles = async (req, res, next) => {
   try {
     const { page, sort, limit, fields, ...queryObj } = req.query;
-    
-    const filter = APIFeatures.filterFeature(queryObj);
-    let query = Article.find(filter);
-    APIFeatures.sortFeature(query, sort);
-    APIFeatures.limitFieldsFeature(query, fields);
-    APIFeatures.paginateFeature(query, limit, page);
+
+    const query = new APIFeatures(Article.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields();
 
     // execute query
-    const allArticles = await query;
+    const allArticles = await query.query;
 
     res.status(200).json({
       status: "success",

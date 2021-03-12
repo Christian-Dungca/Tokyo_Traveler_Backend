@@ -1,47 +1,16 @@
 const Article = require("../models/article-model");
 const HttpError = require("../models/http-error");
+const APIFeatures = require('../util/APIFeatures');
 
 const getArticles = async (req, res, next) => {
-  // console.log(req.query);
-  const { page, sort, limit, fields, ...queryObj } = req.query;
   try {
-    // filtering
-    let queryString = JSON.stringify(queryObj);
-    queryString = queryString.replace(
-      /\b(gte|gt|lte|lt)\b/g,
-      (match) => `$${match}`
-    );
-
-    let query = Article.find(JSON.parse(queryString));
-
-    // sorting
-    if (sort) {
-      // console.log(`sort: ${sort}`);
-      const sortBy = sort.split(",").join(" ");
-      query = query.sort(sortBy);
-    } else {
-      query.sort("-createdAt");
-    }
-
-    // Field Limiting
-    if (fields) {
-      console.log(`fields: ${fields}`);
-      const fieldStr = fields.split(",").join(" ");
-      query = query.select(fieldStr);
-    } else {
-      query = query.select("-__v");
-    }
-
-    const pageN = page * 1 || 1;
-    const limitN = limit * 1 || 2;
-    const skip = (pageN - 1) * limitN;
-
-    query = query.skip(skip).limit(limitN);
-
-    if (page) {
-      const numArticles = await Article.countDocuments();
-      if (skip >= numArticles) throw Error("this page doesn't exit");
-    }
+    const { page, sort, limit, fields, ...queryObj } = req.query;
+    
+    const filter = APIFeatures.filterFeature(queryObj);
+    let query = Article.find(filter);
+    APIFeatures.sortFeature(query, sort);
+    APIFeatures.limitFieldsFeature(query, fields);
+    APIFeatures.paginateFeature(query, limit, page);
 
     // execute query
     const allArticles = await query;

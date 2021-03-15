@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bycrypt = require("bcryptjs");
 
 const UserSchema = mongoose.Schema({
   name: { type: String, require: [true, "Please enter your name"] },
@@ -20,9 +21,29 @@ const UserSchema = mongoose.Schema({
     require: [true, "Please enter a password"],
     minLength: 6,
   },
-  passwordConfirm: { type: String, require: [true, "Please confirm your password"] },
+  passwordConfirm: {
+    type: String,
+    require: [true, "Please confirm your password"],
+    validate: {
+      validator: function (el) {
+        return el === this.password;
+      },
+      message: "Passwords do not match",
+    },
+  },
 });
 
-const User = mongoose.Model("User", UserSchema);
+UserSchema.pre("save", async function (next) {
+  // Only run this function if the password was modified
+  if (!this.isModified("password")) return next();
+  
+  this.password = await bycrypt.hash(this.password, 12);
+
+  // Delete the passwordConfirm field
+  this.passwordConfirm = undefined;
+  next();
+});
+
+const User = mongoose.model("User", UserSchema);
 
 module.exports = User;

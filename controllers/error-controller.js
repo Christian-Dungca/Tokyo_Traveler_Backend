@@ -1,6 +1,8 @@
 const HttpError = require("../models/http-error");
 
 const sendDevError = (err, res) => {
+  console.error("ERROR ❌", err);
+  
   res.json({
     status: err.code,
     err,
@@ -49,7 +51,7 @@ module.exports = (err, req, res, next) => {
     sendDevError(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
-    
+
     if (err.name === "CastError") error = handleCastErrorDB(error);
     if (err.code === 1100) error = handleDuplicateFieldsDB(error);
     if (err.name === "ValidationError") error = handleValidationErrorDB(error);

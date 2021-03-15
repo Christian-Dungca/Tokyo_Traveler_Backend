@@ -33,7 +33,7 @@ app.use("*", (req, res, next) => {
     `Could not find the route: ${req.originalUrl} on this server`,
     404
   );
-  throw error;
+  return next(error)
 });
 
 app.use(errorHandler);

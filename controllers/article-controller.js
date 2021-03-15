@@ -56,10 +56,7 @@ const getArticleById = async (req, res, next) => {
       data: { article },
     });
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
+    next(err);
   }
 };
 
@@ -76,10 +73,7 @@ const createArticle = async (req, res, next) => {
       data: { newArticle },
     });
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
+    next(err);
   }
 };
 
@@ -99,31 +93,23 @@ const updateArticle = async (req, res, next) => {
       { new: true, runValidators: true },
       function (err) {
         if (err) {
-          const error = new HttpError(
-            `Could not update article with id of ${articleId}`,
-            500
-          );
-          return next(error);
+          // const error = new HttpError(
+          //   `Could not update article with id of ${articleId}`,
+          //   500
+          // );
+          return next(err);
         }
       }
     );
 
     updatedArticle.save();
-    // const updatedArticle = await Article.findByIdAndUpdate(
-    //   articleId,
-    //   req.body,
-    //   { new: true, runValidators: true }
-    // );
-
+    
     res.status(201).json({
       status: "success",
       data: { updatedArticle },
     });
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
+    return next(err);
   }
 };
 

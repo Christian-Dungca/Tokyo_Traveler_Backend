@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const app = require("./app");
+process.on("uncaughtException", (err) => {
+  console.log("Unhandled Exception ❌, Shutting Down Server...");
+  console.log(err.name, err.message);
+  process.exit(1)
+});
 
 dotenv.config({ path: "./config.env" });
+const app = require("./app");
 
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
@@ -18,8 +23,17 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("DB connection successful ✅"));
-
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+
+const server = app.listen(port, () => {
   console.log(`App is listening on port ${port}... 🍾`);
 });
+
+process.on("unhandledRejection", (err) => {
+  console.log("Unhandled Rejection ❌, Shutting Down Server...");
+  console.log(err);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+

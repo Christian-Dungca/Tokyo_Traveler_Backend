@@ -12,18 +12,16 @@ const getArticles = async (req, res, next) => {
       .limitFields();
 
     // execute query
-    const allArticles = await query.query;
+    const articles = await query.query;
 
     res.status(200).json({
       status: "success",
-      results: allArticles.length,
-      data: { allArticles },
+      results: articles.length,
+      data: { articles },
     });
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
+    const error = new HttpError(`Could not retrieve articles`, 400);
+    return next(error);
   }
 };
 
@@ -48,6 +46,11 @@ const getArticleById = async (req, res, next) => {
   try {
     const articleId = req.params.aid;
     const article = await Article.findById(articleId);
+
+    if (!article) {
+      return next(new HttpError("No article found with that ID", 404));
+    }
+
     res.status(200).json({
       status: "success",
       data: { article },
@@ -63,6 +66,11 @@ const getArticleById = async (req, res, next) => {
 const createArticle = async (req, res, next) => {
   try {
     const newArticle = await Article.create(req.body);
+
+    if (!newArticle) {
+      return next(new HttpError("Could not create a new Article", 404));
+    }
+
     res.status(201).json({
       status: "success",
       data: { newArticle },
@@ -78,11 +86,35 @@ const createArticle = async (req, res, next) => {
 const updateArticle = async (req, res, next) => {
   try {
     const articleId = req.params.aid;
-    const updatedArticle = await Article.findByIdAndUpdate(
-      articleId,
+    const article = await Article.findById(articleId);
+
+    if (!article) {
+      return next(new HttpError("Could not find an article with that ID", 404));
+    }
+
+    console.log(req.body);
+    const updatedArticle = await Article.findOneAndUpdate(
+      { _id: article._id },
       req.body,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
+      function (err) {
+        if (err) {
+          const error = new HttpError(
+            `Could not update article with id of ${articleId}`,
+            500
+          );
+          return next(error);
+        }
+      }
     );
+
+    updatedArticle.save();
+    // const updatedArticle = await Article.findByIdAndUpdate(
+    //   articleId,
+    //   req.body,
+    //   { new: true, runValidators: true }
+    // );
+
     res.status(201).json({
       status: "success",
       data: { updatedArticle },

@@ -116,7 +116,27 @@ exports.restrictTo = (...roles) => {
         new HttpError("You do not have permission to perform this action", 403)
       );
     }
-    
+
     next();
   };
 };
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return next(
+        new HttpError("There is no user with that email address", 404)
+      );
+    }
+    // generate random token
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false  });
+
+    // send it to user's email
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.resetPassword = (req, res, next) => {};

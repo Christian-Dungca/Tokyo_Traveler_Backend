@@ -1,12 +1,13 @@
 const express = require("express");
 
 const articleController = require("../controllers/article-controller");
+const authController = require("./../controllers/auth-controller");
 
 const router = express.Router();
 
 router
   .route("/")
-  .get(articleController.getArticles)
+  .get(authController.protectRoute, articleController.getArticles)
   .post(articleController.createArticle);
 
 router

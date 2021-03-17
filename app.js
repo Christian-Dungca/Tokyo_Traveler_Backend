@@ -25,6 +25,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  console.log(req.headers);
+  next();
+});
+
 app.use("/api/articles", articleRoutes);
 app.use("/api/users", userRoutes);
 
@@ -33,7 +38,7 @@ app.use("*", (req, res, next) => {
     `Could not find the route: ${req.originalUrl} on this server`,
     404
   );
-  return next(error)
+  return next(error);
 });
 
 app.use(errorHandler);

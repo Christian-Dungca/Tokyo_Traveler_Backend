@@ -14,7 +14,11 @@ router
   .route("/:aid")
   .get(articleController.getArticleById)
   .patch(articleController.updateArticle)
-  .delete(articleController.deleteArticle);
+  .delete(
+    authController.protectRoute,
+    authController.restrictTo("admin", "author"),
+    articleController.deleteArticle
+  );
 
 router.get("/user/:uid", articleController.getArticleByUserId);
 

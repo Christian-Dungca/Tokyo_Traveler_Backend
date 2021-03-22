@@ -1,6 +1,8 @@
+const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const HttpError = require("../models/http-error");
+const sendEmail = require("../util/email");
 const User = require("./../models/user-model");
 
 const signToken = (id) => {
@@ -131,12 +133,74 @@ exports.forgotPassword = async (req, res, next) => {
     }
     // generate random token
     const resetToken = user.createPasswordResetToken();
-    await user.save({ validateBeforeSave: false  });
+    await user.save({ validateBeforeSave: false });
 
     // send it to user's email
+    const resetURL = `${req.protocol}://${req.get(
+      "host"
+    )}/api/users/resetPassword/${resetToken}}`;
+
+    const message = ` Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email`;
+
+    await sendEmail({
+      email: user.email,
+      subject: "Your password reset token (valid for 10 minutes)",
+      message,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Token sent to email!",
+    });
   } catch (err) {
     console.log(err);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new HttpError(
+        "There was an error sending the email. Try again later!",
+        500
+      )
+    );
   }
 };
 
-exports.resetPassword = (req, res, next) => {};
+exports.resetPassword = async (req, res, next) => {
+  try {
+    // Get user based on the token
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    // Set the new password if token is not expired and there is a user
+    if (!user) {
+      return next(new HttpError("Token is invalid or has expired", 400));
+    }
+
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    // Update changePasswordAt property for the user
+
+    // Log the user in, send JWT
+    const token = await signToken(user._id);
+
+    res.status(201).json({
+      status: "success",
+      token,
+    });
+  } catch (err) {
+    return next(new HttpError(err, 400));
+  }
+};

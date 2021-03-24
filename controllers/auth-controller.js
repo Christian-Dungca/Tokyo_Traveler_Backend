@@ -12,11 +12,23 @@ const signToken = (id) => {
   return token;
 };
 
+const createSendToken = async (user, statusCode, res) => {
+  const token = await signToken(user._id);
+
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user: user,
+    },
+  });
+};
+
 exports.signup = async (req, res, next) => {
   try {
     const { name, email, password, passwordConfirm } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
     const newUser = await User.create({
       name,
       email,
@@ -26,15 +38,7 @@ exports.signup = async (req, res, next) => {
       return next(new HttpError("Could not create user", 500));
     });
 
-    const token = await signToken(newUser._id);
-
-    res.status(201).json({
-      status: "success",
-      token,
-      data: {
-        user: newUser,
-      },
-    });
+    createSendToken(newUser, 201, res);
   } catch (err) {
     const error = new HttpError(err, 500);
     return next(error);
@@ -55,11 +59,7 @@ exports.login = async (req, res, next) => {
       return next(new HttpError("Incorrect Email or Password", 401));
     }
 
-    const token = signToken(user._id);
-    res.status(200).json({
-      status: "success",
-      token,
-    });
+    createSendToken(user, 200, res);
   } catch (err) {
     console.log(err);
     const error = new HttpError(err, 500);
@@ -73,7 +73,7 @@ exports.protectRoute = async (req, res, next) => {
 
     // Check if the correct headers are sent
     if (
-      !req.headers.authorization &&
+      !req.headers.authorization ||
       !req.headers.authorization.startsWith("Bearer")
     ) {
       return next(new HttpError("You are not logged in", 401));
@@ -87,7 +87,7 @@ exports.protectRoute = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    console.log(decodedToken);
+    // console.log(decodedToken);
     // Check if user still exist
     const existingUser = await User.findById(decodedToken.id);
     console.log(`existingUser: ${existingUser}`);
@@ -194,13 +194,34 @@ exports.resetPassword = async (req, res, next) => {
     // Update changePasswordAt property for the user
 
     // Log the user in, send JWT
-    const token = await signToken(user._id);
-
-    res.status(201).json({
-      status: "success",
-      token,
-    });
+    createSendToken(user, 200, res);
   } catch (err) {
     return next(new HttpError(err, 400));
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  try {
+    // Get user from collection
+    const user = await User.findById(req.user.id).select("+password");
+
+    // Check if Posted current password is correct
+    if (
+      !(await user.correctPassword(req.body.passwordCurrent, user.password))
+    ) {
+      return next(new HttpError("Your current password is wrong.", 401));
+    }
+
+    // If password is correct, update password
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+
+    // Log user in, send JWT
+    createSendToken(user, 200, res);
+  } catch (err) {
+    return next(
+      new HttpError("There was an error updating your password", 500)
+    );
   }
 };

@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  console.log(req.headers);
+  // console.log(req.headers);
   next();
 });
 

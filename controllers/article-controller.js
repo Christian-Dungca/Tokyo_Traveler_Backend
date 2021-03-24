@@ -86,7 +86,7 @@ const updateArticle = async (req, res, next) => {
       return next(new HttpError("Could not find an article with that ID", 404));
     }
 
-    console.log(req.body);
+    // console.log(req.body);
     const updatedArticle = await Article.findOneAndUpdate(
       { _id: article._id },
       req.body,

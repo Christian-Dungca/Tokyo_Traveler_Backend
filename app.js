@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit");
 
 const HttpError = require("./models/http-error");
 const errorHandler = require("./controllers/error-controller");
@@ -11,7 +12,19 @@ const userRoutes = require("./routes/user-routes");
 
 const app = express();
 
-app.use(morgan("dev"));
+// Global Middlewares
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many request from this IP, please try again in an hour!",
+});
+
+app.use("/api", limiter);
+
 app.use(express.json());
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 

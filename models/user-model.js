@@ -41,8 +41,14 @@ const UserSchema = mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
+// Document Middleware - points to current document
 UserSchema.pre("save", async function (next) {
   // Only run this function if the password was modified
   if (!this.isModified("password")) return next();
@@ -61,6 +67,13 @@ UserSchema.pre("save", function (next) {
   next();
 });
 
+// Query Middleware - points to current query
+UserSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
+// Model Methods 
 UserSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
   if (this.passwordChangeAt) {
     const changedTimeStamp = parseInt(

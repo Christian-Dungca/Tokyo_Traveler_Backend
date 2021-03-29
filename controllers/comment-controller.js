@@ -19,6 +19,9 @@ exports.getAllComments = async (req, res, next) => {
 
 exports.createComment = async (req, res, next) => {
   try {
+    if (!req.body.article) req.body.article = req.params.aid;
+    if (!req.body.user) req.body.user = req.user.id;
+
     const newReview = await Comment.create(req.body);
 
     res.status(200).json({

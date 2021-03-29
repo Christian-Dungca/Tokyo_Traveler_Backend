@@ -2,8 +2,11 @@ const express = require("express");
 
 const articleController = require("../controllers/article-controller");
 const authController = require("./../controllers/auth-controller");
+const commentRoutes = require("./comment-routes");
 
 const router = express.Router();
+
+router.use("/:aid/comments", commentRoutes);
 
 router
   .route("/")

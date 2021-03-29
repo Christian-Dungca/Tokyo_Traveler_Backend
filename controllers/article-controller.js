@@ -45,7 +45,7 @@ const getArticleByUserId = (req, res, next) => {
 const getArticleById = async (req, res, next) => {
   try {
     const articleId = req.params.aid;
-    const article = await Article.findById(articleId);
+    const article = await Article.findById(articleId).populate("comments");
 
     if (!article) {
       return next(new HttpError("No article found with that ID", 404));
@@ -103,7 +103,7 @@ const updateArticle = async (req, res, next) => {
     );
 
     updatedArticle.save();
-    
+
     res.status(201).json({
       status: "success",
       data: { updatedArticle },

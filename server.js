@@ -4,11 +4,12 @@ const dotenv = require("dotenv");
 process.on("uncaughtException", (err) => {
   console.log("Unhandled Exception ❌, Shutting Down Server...");
   console.log(err.name, err.message);
-  process.exit(1)
+  process.exit(1);
 });
 
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
+const HttpError = require("./models/http-error");
 
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
@@ -22,7 +23,10 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("DB connection successful ✅"));
+  .then(() => console.log("DB connection successful ✅"))
+  .catch((err) => {
+    return next(new HttpError(err, 500));
+  });
 const port = process.env.PORT || 3000;
 
 const server = app.listen(port, () => {
@@ -36,4 +40,3 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
-

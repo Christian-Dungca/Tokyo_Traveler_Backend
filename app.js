@@ -13,6 +13,7 @@ const HttpError = require("./models/http-error");
 const errorHandler = require("./controllers/error-controller");
 const articleRoutes = require("./routes/article-routes");
 const userRoutes = require("./routes/user-routes");
+const commentRoutes = require("./routes/comment-routes");
 
 const app = express();
 // Set security HTTP headers
@@ -67,6 +68,7 @@ app.use((req, res, next) => {
 
 app.use("/api/articles", articleRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/comments", commentRoutes);
 
 app.use("*", (req, res, next) => {
   const error = new HttpError(

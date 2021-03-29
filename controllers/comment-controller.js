@@ -3,7 +3,10 @@ const Comment = require("../models/comment-model");
 
 exports.getAllComments = async (req, res, next) => {
   try {
-    const comments = await Comment.find();
+    let filter = {};
+    if (req.params.aid) filter = { article: req.params.aid };
+
+    const comments = await Comment.find(filter);
 
     res.status(200).json({
       status: "sucess",

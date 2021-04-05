@@ -61,3 +61,22 @@ exports.getAllUsers = async (req, res, next) => {
     },
   });
 };
+
+exports.getUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.uid;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return next(new HttpError("No user with that ID", 400));
+    }
+
+    res.status(200).json({
+      status: "success",
+      user,
+    });
+  } catch (err) {
+    console.log(err);
+    // return next(new HttpError("No user with that ID", 400));
+  }
+};

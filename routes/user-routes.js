@@ -6,7 +6,14 @@ const { route } = require("./article-routes");
 
 const router = express.Router();
 
-router.get("/", userController.getAllUsers);
+router.get(
+  "/",
+  authController.protectRoute,
+  authController.restrictTo("admin"),
+  userController.getAllUsers
+);
+
+router.get("/:uid", userController.getUserById);
 
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);

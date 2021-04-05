@@ -16,7 +16,12 @@ router
 router
   .route("/:aid")
   .get(articleController.getArticleById)
-  .patch(articleController.updateArticle)
+  .patch(
+    authController.protectRoute,
+    authController.restrictTo("author"),
+    articleController.updateArticle
+  )
+  
   .delete(
     authController.protectRoute,
     authController.restrictTo("admin", "author"),

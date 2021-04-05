@@ -23,6 +23,10 @@ const articleSchema = new mongoose.Schema(
       type: Number,
       required: false,
     },
+    // author: {
+    //   require: [true, 'An article must have an author'],
+    //   type: mongoose.Schema.Types.ObjectId,
+    // },
   },
   {
     toJSON: { virtuals: true },

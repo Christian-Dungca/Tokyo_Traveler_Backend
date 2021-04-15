@@ -4,48 +4,48 @@
     "createdAt": 1614889399436,
     "image": "/uploads/images",
     "content": ["this is funny", "hahaha", "okay"],
-    "likes": 125
+    "author": "60783726164c941972bf9fe7"
   },
   {
     "title": "squids on the microphone",
     "createdAt": 1614889399436,
     "image": "/uploads/images",
     "content": ["this is funny", "hahaha", "okay"],
-    "likes": 121
+    "author": "60783726164c941972bf9fe7"
   },
   {
     "title": "baby and buttercups",
     "createdAt": 1614889399436,
     "image": "/uploads/images",
     "content": ["this is funny", "hahaha", "okay"],
-    "likes": 8
+    "author": "60783726164c941972bf9fe7"
   },
   {
     "title": "banana milk",
     "createdAt": 1615323553122,
     "image": "/uploads/images",
     "content": ["this is funny", "hahaha", "okay"],
-    "likes": 422
+    "author": "60783726164c941972bf9fe7"
   },
   {
     "title": "Jeremy Plant's Bark",
     "createdAt": 1615323553122,
     "image": "/uploads/images",
     "content": ["this is funny", "hahaha", "okay"],
-    "likes": 421
+    "author": "60783726164c941972bf9fe7"
   },
   {
     "title": "Outside Seal Buttons",
     "createdAt": 1615323591862,
     "image": "/uploads/images",
     "content": ["this is funny", "hahaha", "okay"],
-    "likes": 222
+    "author": "60783726164c941972bf9fe7"
   },
   {
     "title": "Jennifer School Bully",
     "createdAt": 1615323591862,
     "image": "/uploads/images",
     "content": ["this is funny", "hahaha", "okay"],
-    "likes": 322
+    "author": "60783726164c941972bf9fe7"
   }
 ]

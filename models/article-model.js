@@ -19,13 +19,10 @@ const articleSchema = new mongoose.Schema(
       type: [String],
       required: [true, "An article must have content"],
     },
-    likes: {
-      type: Number,
-      required: false,
-    },
     author: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
+      required: [true, "An article must have an author"],
     },
   },
   {
@@ -34,12 +31,20 @@ const articleSchema = new mongoose.Schema(
   }
 );
 
-//Virtual Populate
-articleSchema.virtual("comments", {
-  ref: "Comment",
-  foreignField: "article",
-  localField: "_id",
+articleSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "author",
+    select: "-__v -password -email -active -createdAt -role",
+  });
+  next();
 });
+
+//Virtual Populate
+// articleSchema.virtual("comments", {
+//   ref: "Comment",
+//   foreignField: "article",
+//   localField: "_id",
+// });
 
 const Article = mongoose.model("Article", articleSchema);
 

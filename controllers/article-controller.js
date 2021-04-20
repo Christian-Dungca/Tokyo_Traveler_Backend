@@ -73,10 +73,10 @@ const createArticle = async (req, res, next) => {
     const newArticle = await Article.create({
       title,
       image,
-      authorId,
       introduction,
       tags,
       sections,
+      author: authorId,
     });
 
     if (!newArticle) {

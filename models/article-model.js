@@ -48,9 +48,39 @@ const articleSchema = new mongoose.Schema(
   }
 );
 
+articleSchema.virtual("timestamp").get(function () {
+  return this.createdAt.getTime();
+});
+
+articleSchema.virtual("createdAtFormatted").get(function () {
+  const timestamp = this.createdAt.getTime();
+
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    " May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  let date = new Date(parseInt(timestamp));
+  let year = date.getFullYear();
+  let month = date.getMonth();
+  let day = date.getDate();
+  return `${months[month]} ${day}, ${year}`;
+});
+
 articleSchema.virtual("tableOfContents").get(function () {
   const headingList = this.sections.map((section) => {
-    return section.heading;
+    let sectionString = section.heading.split(" ").join("-");
+    return sectionString;
   });
 
   return headingList;

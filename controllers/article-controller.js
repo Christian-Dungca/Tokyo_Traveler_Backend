@@ -25,6 +25,7 @@ const getArticles = async (req, res, next) => {
   }
 };
 
+// need this for Author Page maybe?
 const getArticleByUserId = (req, res, next) => {
   //   const userId = req.params.uid;
   //   let userArticles;
@@ -45,7 +46,10 @@ const getArticleByUserId = (req, res, next) => {
 const getArticleById = async (req, res, next) => {
   try {
     const articleId = req.params.aid;
-    const article = await Article.findById(articleId).populate("comments");
+    const article = await Article.findById(articleId).populate({
+      path: "author",
+      select: "-__v -password -email -active -createdAt -role",
+    });
 
     if (!article) {
       return next(new HttpError("No article found with that ID", 404));
@@ -62,7 +66,18 @@ const getArticleById = async (req, res, next) => {
 
 const createArticle = async (req, res, next) => {
   try {
-    const newArticle = await Article.create(req.body);
+    const { title, image, createdAt, introduction, tags, sections } = req.body;
+
+    const authorId = req.user._id;
+
+    const newArticle = await Article.create({
+      title,
+      image,
+      authorId,
+      introduction,
+      tags,
+      sections,
+    });
 
     if (!newArticle) {
       return next(new HttpError("Could not create a new Article", 404));

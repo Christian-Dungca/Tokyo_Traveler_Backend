@@ -11,7 +11,11 @@ router.use("/:aid/comments", commentRoutes);
 router
   .route("/")
   .get(articleController.getArticles)
-  .post(articleController.createArticle);
+  .post(
+    authController.protectRoute,
+    authController.restrictTo("author"),
+    articleController.createArticle
+  );
 
 router
   .route("/:aid")
@@ -21,7 +25,7 @@ router
     authController.restrictTo("author"),
     articleController.updateArticle
   )
-  
+
   .delete(
     authController.protectRoute,
     authController.restrictTo("admin", "author"),

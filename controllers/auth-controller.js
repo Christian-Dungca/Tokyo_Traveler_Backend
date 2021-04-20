@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
+
 const HttpError = require("../models/http-error");
 const sendEmail = require("../util/email");
 const User = require("./../models/user-model");

@@ -15,21 +15,46 @@ const articleSchema = new mongoose.Schema(
       required: false,
       default: Date.now(),
     },
-    content: {
-      type: [String],
-      required: [true, "An article must have content"],
-    },
     author: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
-      required: [true, "An article must have an author"],
+      // required: [true, "An article must have an author"],
     },
+    introduction: {
+      type: String,
+      required: true,
+    },
+    tags: {
+      type: String,
+      enum: ["Before You Leave", "During Your Trip"],
+      required: [true, "An article must have a tag"],
+    },
+    sections: [
+      {
+        heading: {
+          type: String,
+          required: [true, "A section must have a heading"],
+        },
+        content: {
+          type: [String],
+          required: [true, "A section must have content"],
+        },
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
+
+articleSchema.virtual("tableOfContents").get(function () {
+  const headingList = this.sections.map((section) => {
+    return section.heading;
+  });
+
+  return headingList;
+});
 
 articleSchema.pre(/^find/, function (next) {
   this.populate({

@@ -36,7 +36,6 @@ class APIFeatures {
 
     if (fields) {
       const fieldStr = fields.split(",").join(" ");
-      console.log(`fieldStr -- ${fieldStr}`);
       this.query = this.query.select(fieldStr);
     } else {
       this.query = this.query.select("-__v");
@@ -47,7 +46,6 @@ class APIFeatures {
 
   paginate() {
     const { page, limit } = this.queryString;
-    console.log(`limit: ${limit}`);
 
     const pageN = page * 1 || 1;
     const limitN = limit * 1 || 20;

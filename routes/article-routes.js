@@ -3,6 +3,7 @@ const express = require("express");
 const articleController = require("../controllers/article-controller");
 const authController = require("./../controllers/auth-controller");
 const commentRoutes = require("./comment-routes");
+const fileUpload = require("../middleware/file-upload");
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router
   .post(
     authController.protectRoute,
     authController.restrictTo("author"),
+    fileUpload.single("articleImage"),
     articleController.createArticle
   );
 

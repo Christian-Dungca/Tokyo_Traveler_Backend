@@ -66,16 +66,17 @@ const getArticleById = async (req, res, next) => {
 
 const createArticle = async (req, res, next) => {
   try {
-    const { title, image, createdAt, introduction, tags, sections } = req.body;
-
+    const { title, tags, introduction, sections } = req.body;
+    
     const authorId = req.user._id;
+    const imagePath = req.file.path;
 
     const newArticle = await Article.create({
       title,
-      image,
       introduction,
       tags,
       sections,
+      image: imagePath,
       author: authorId,
     });
 

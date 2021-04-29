@@ -1,3 +1,5 @@
+const Article = require("../models/article-model");
+
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -5,10 +7,12 @@ class APIFeatures {
   }
 
   filter() {
-    const { sort, limit, fields, ...queryObj } = this.queryString;
+    const { sort, limit, fields, page, ...queryObj } = this.queryString;
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     this.query.find(JSON.parse(queryStr));
+
+    // console.log(this.query);
 
     return this;
   }
@@ -20,9 +24,10 @@ class APIFeatures {
       const sortBy = sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
     } else {
-      this.query.sort("-createdAt");
+      this.query = this.query.sort("-createdAt");
     }
 
+    // console.log(this.query);
     return this;
   }
 
@@ -31,6 +36,7 @@ class APIFeatures {
 
     if (fields) {
       const fieldStr = fields.split(",").join(" ");
+      console.log(`fieldStr -- ${fieldStr}`);
       this.query = this.query.select(fieldStr);
     } else {
       this.query = this.query.select("-__v");
@@ -41,13 +47,15 @@ class APIFeatures {
 
   paginate() {
     const { page, limit } = this.queryString;
-    // console.log(limit);
+    console.log(`limit: ${limit}`);
 
     const pageN = page * 1 || 1;
     const limitN = limit * 1 || 20;
     const skip = (pageN - 1) * limitN;
 
     this.query = this.query.skip(skip).limit(limitN);
+
+    return this;
   }
 }
 

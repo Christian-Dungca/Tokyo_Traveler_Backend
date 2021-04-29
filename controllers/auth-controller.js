@@ -31,6 +31,12 @@ exports.signup = async (req, res, next) => {
   try {
     const { name, email, password, passwordConfirm } = req.body;
 
+    const existingUser = await User.find({ email: email });
+
+    if (existingUser) {
+      return next(new HttpError("User with that email already exist!", 400));
+    }
+
     // console.log(req.body);
     const newUser = await User.create({
       name,

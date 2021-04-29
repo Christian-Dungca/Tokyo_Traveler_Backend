@@ -4,15 +4,15 @@ const APIFeatures = require("../util/APIFeatures");
 
 const getArticles = async (req, res, next) => {
   try {
-    const { page, sort, limit, fields, ...queryObj } = req.query;
-
-    const query = new APIFeatures(Article.find(), req.query)
+    const features = new APIFeatures(Article.find(), req.query)
       .filter()
       .sort()
-      .limitFields();
+      .limitFields()
+      .paginate();
 
     // execute query
-    const articles = await query.query;
+    const articles = await features.query;
+    console.log(articles);
 
     res.status(200).json({
       status: "success",
@@ -20,7 +20,7 @@ const getArticles = async (req, res, next) => {
       data: { articles },
     });
   } catch (err) {
-    const error = new HttpError(`Could not retrieve articles`, 400);
+    const error = new HttpError(err, 400);
     return next(error);
   }
 };

@@ -49,10 +49,12 @@ const articleSchema = new mongoose.Schema(
 );
 
 articleSchema.virtual("timestamp").get(function () {
+  if(!this.createdAt) return;
   return this.createdAt.getTime();
 });
 
 articleSchema.virtual("createdAtFormatted").get(function () {
+  if(!this.createdAt) return;
   const timestamp = this.createdAt.getTime();
 
   let months = [
@@ -78,6 +80,7 @@ articleSchema.virtual("createdAtFormatted").get(function () {
 });
 
 articleSchema.virtual("tableOfContents").get(function () {
+  if(!this.sections) return;
   const headingList = this.sections.map((section) => {
     let sectionString = section.heading.split(" ").join("-");
     return sectionString;

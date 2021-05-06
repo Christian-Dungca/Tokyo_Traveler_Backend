@@ -15,7 +15,8 @@ router
   .post(
     authController.protectRoute,
     authController.restrictTo("author"),
-    fileUpload.single("articleImage"),
+    // fileUpload.single("image[0]"),
+    fileUpload.any(),
     articleController.createArticle
   );
 

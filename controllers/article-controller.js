@@ -12,7 +12,7 @@ const getArticles = async (req, res, next) => {
 
     // execute query
     const articles = await features.query;
-    console.log(articles);
+    // console.log(articles);
 
     res.status(200).json({
       status: "success",
@@ -66,16 +66,27 @@ const getArticleById = async (req, res, next) => {
 
 const createArticle = async (req, res, next) => {
   try {
+    if (!req.files) {
+      res.status(400).json({ status: "fail", message: "No file" });
+    }
+    console.log("req.body");
+    console.log(req.body);
+    console.log("----------");
+    
+    // console.log("req.file");
+    // console.log(req.files[0]);
+    // console.log("----------");
+    
     const { title, tags, introduction, sections } = req.body;
     
     const authorId = req.user._id;
-    const imagePath = req.file.path;
+    const imagePath = req.files[0].path;
 
     const newArticle = await Article.create({
       title,
       introduction,
       tags,
-      sections,
+      sections: JSON.parse(sections),
       image: imagePath,
       author: authorId,
     });

@@ -8,17 +8,15 @@ const fileUpload = require("../middleware/file-upload");
 const router = express.Router();
 
 router.use("/:aid/comments", commentRoutes);
+router.get("/user/:uid", articleController.getArticlesByUserId);
 
-router
-  .route("/")
-  .get(articleController.getArticles)
-  .post(
-    authController.protectRoute,
-    authController.restrictTo("author"),
-    // fileUpload.single("image[0]"),
-    fileUpload.any(),
-    articleController.createArticle
-  );
+router.route("/").get(articleController.getArticles).post(
+  authController.protectRoute,
+  authController.restrictTo("author"),
+  // fileUpload.single("image[0]"),
+  fileUpload.any(),
+  articleController.createArticle
+);
 
 router
   .route("/:aid")
@@ -34,7 +32,5 @@ router
     authController.restrictTo("admin", "author"),
     articleController.deleteArticle
   );
-
-router.get("/user/:uid", articleController.getArticleByUserId);
 
 module.exports = router;

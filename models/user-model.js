@@ -78,7 +78,7 @@ UserSchema.pre(/^find/, function (next) {
   next();
 });
 
-// Model Methods 
+// Model Methods
 UserSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
   if (this.passwordChangeAt) {
     const changedTimeStamp = parseInt(

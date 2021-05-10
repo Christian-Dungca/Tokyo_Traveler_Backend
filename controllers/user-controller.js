@@ -77,6 +77,6 @@ exports.getUserById = async (req, res, next) => {
     });
   } catch (err) {
     console.log(err);
-    // return next(new HttpError("No user with that ID", 400));
+    return next(500, err);
   }
 };

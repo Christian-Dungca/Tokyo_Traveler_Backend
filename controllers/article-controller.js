@@ -26,21 +26,28 @@ const getArticles = async (req, res, next) => {
 };
 
 // need this for Author Page maybe?
-const getArticleByUserId = (req, res, next) => {
-  //   const userId = req.params.uid;
-  //   let userArticles;
-  //   try {
-  //     userArticles = DUMMY_ARTICLES.filter((article) => {
-  //       return article.author.id === userId;
-  //     });
-  //     if (userArticles.length === 0) {
-  //       throw "Could not find articles for that user";
-  //     }
-  //   } catch (err) {
-  //     const Error = new HttpError(err, 401);
-  //     return next(Error);
-  //   }
-  //   res.json({ data: userArticles });
+const getArticlesByUserId = async (req, res, next) => {
+  const userId = req.params.uid;
+  let userArticles;
+
+  try {
+    userArticles = new APIFeatures(Article.find({ author: userId }), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const articles = await userArticles.query;
+
+    res.status(200).json({
+      status: "success",
+      results: articles.length,
+      data: articles,
+    });
+  } catch (err) {
+    const error = new HttpError(err, 400);
+    return next(error);
+  }
 };
 
 const getArticleById = async (req, res, next) => {
@@ -72,13 +79,13 @@ const createArticle = async (req, res, next) => {
     console.log("req.body");
     console.log(req.body);
     console.log("----------");
-    
+
     // console.log("req.file");
     // console.log(req.files[0]);
     // console.log("----------");
-    
+
     const { title, tags, introduction, sections } = req.body;
-    
+
     const authorId = req.user._id;
     const imagePath = req.files[0].path;
 
@@ -157,7 +164,7 @@ const deleteArticle = async (req, res, next) => {
 };
 
 exports.getArticles = getArticles;
-exports.getArticleByUserId = getArticleByUserId;
+exports.getArticlesByUserId = getArticlesByUserId;
 exports.getArticleById = getArticleById;
 exports.createArticle = createArticle;
 exports.updateArticle = updateArticle;

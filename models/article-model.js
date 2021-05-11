@@ -48,6 +48,13 @@ const articleSchema = new mongoose.Schema(
   }
 );
 
+//Virtual Populate
+articleSchema.virtual("comments", {
+  ref: "Comment",
+  foreignField: "article",
+  localField: "_id",
+});
+
 articleSchema.virtual("timestamp").get(function () {
   if(!this.createdAt) return;
   return this.createdAt.getTime();
@@ -97,12 +104,6 @@ articleSchema.pre(/^find/, function (next) {
   next();
 });
 
-//Virtual Populate
-// articleSchema.virtual("comments", {
-//   ref: "Comment",
-//   foreignField: "article",
-//   localField: "_id",
-// });
 
 const Article = mongoose.model("Article", articleSchema);
 

@@ -1,4 +1,5 @@
 const Article = require("../models/article-model");
+const User = require("../models/user-model");
 const HttpError = require("../models/http-error");
 const APIFeatures = require("../util/APIFeatures");
 
@@ -29,6 +30,21 @@ const getArticles = async (req, res, next) => {
 const getArticlesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
   let userArticles;
+  let user;
+
+  try {
+    user = await User.findById(userId);
+
+    if (!user) {
+      return next(new HttpError("There is no user with that ID", 400));
+    }
+
+    if (user.role !== "author") {
+      return next(new HttpError("That user is not an author", 400));
+    }
+  } catch (err) {
+    console.log(err);
+  }
 
   try {
     userArticles = new APIFeatures(Article.find({ author: userId }), req.query)
@@ -53,10 +69,12 @@ const getArticlesByUserId = async (req, res, next) => {
 const getArticleById = async (req, res, next) => {
   try {
     const articleId = req.params.aid;
-    const article = await Article.findById(articleId).populate({
-      path: "author",
-      select: "-__v -password -email -active -createdAt -role",
-    });
+    const article = await Article.findById(articleId)
+      .populate({
+        path: "author",
+        select: "name",
+      })
+      .populate("comments");
 
     if (!article) {
       return next(new HttpError("No article found with that ID", 404));

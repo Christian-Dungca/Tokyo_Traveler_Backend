@@ -8,6 +8,7 @@ const fileUpload = require("../middleware/file-upload");
 const router = express.Router();
 
 router.use("/:aid/comments", commentRoutes);
+
 router.get("/user/:uid", articleController.getArticlesByUserId);
 
 router.route("/").get(articleController.getArticles).post(

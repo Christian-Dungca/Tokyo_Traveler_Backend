@@ -9,7 +9,7 @@ router
   .get(commentController.getAllComments)
   .post(
     authController.protectRoute,
-    authController.restrictTo("user"),
+    authController.restrictTo("user", "author"),
     commentController.createComment
   );
 
